@@ -29,19 +29,15 @@ const initializeDatabase = async () => {
 };
 
 const loadResponses = async () => {
-    try {
-        const rows = await db.all('SELECT question, answer FROM responses');
-        rows.forEach(row => {
-            ['en', 'tl', 'es', 'fr'].forEach(lang => {
-                manager.addDocument(lang, row.question, row.question);
-                manager.addAnswer(lang, row.question, row.answer);
-            });
+    const rows = await db.all('SELECT question, answer FROM responses');
+    rows.forEach(row => {
+        ['en', 'tl', 'es', 'fr'].forEach(lang => {
+            manager.addDocument(lang, row.question, row.question);
+            manager.addAnswer(lang, row.question, row.answer);
         });
-        await manager.train();
-        manager.save();
-    } catch (err) {
-        console.error('Error loading responses:', err);
-    }
+    });
+    await manager.train();
+    manager.save();
 };
 
 const loadApiKeys = () => {
@@ -58,12 +54,22 @@ const validateApiKey = (apiKey) => {
     return keyData && new Date(keyData.expiration) > new Date();
 };
 
-const generateApiKey = () => {
+const generateApiKey = (ip) => {
+    const apiKeys = loadApiKeys();
+    const existingKey = apiKeys.find(key => key.ip === ip);
+    const currentTime = new Date();
+    if (existingKey) {
+        if (new Date(existingKey.expiration) > currentTime) {
+            return existingKey.api_key;
+        } else {
+            apiKeys.splice(apiKeys.indexOf(existingKey), 1);
+        }
+    }
     const apiKey = `nsh-${crypto.randomBytes(16).toString('hex')}`;
     const expiration = new Date();
     expiration.setDate(expiration.getDate() + API_KEY_EXPIRY_DAYS);
-    const apiKeys = loadApiKeys();
-    apiKeys.push({ api_key: apiKey, expiration });
+    const newKey = { api_key: apiKey, expiration, ip };
+    apiKeys.push(newKey);
     saveApiKeys(apiKeys);
     return apiKey;
 };
@@ -80,7 +86,7 @@ const generateTimeResponse = (timezone) => {
 };
 
 app.get('/apikey', (req, res) => {
-    const apiKey = generateApiKey();
+    const apiKey = generateApiKey(req.ip);
     res.status(200).json({ apiKey });
 });
 
@@ -157,9 +163,8 @@ const autoLearnFromResponses = async () => {
     });
 
     for (const question in responsesMap) {
-        const answers = responsesMap[question];
-        const uniqueAnswers = [...new Set(answers)];
-        uniqueAnswers.forEach(answer => {
+        const answers = [...new Set(responsesMap[question])];
+        answers.forEach(answer => {
             manager.addAnswer('en', question, answer);
             manager.addAnswer('tl', question, answer);
             manager.addAnswer('es', question, answer);
