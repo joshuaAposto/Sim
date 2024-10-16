@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimiSimi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f0f2f5, #e6e9ff);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin: 10px 0;
+            font-size: 1em;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        #api-key-display {
+            margin: 20px 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1em;
+            word-wrap: break-word;
+            border: 1px solid #28a745;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .expired {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 4px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .active {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 4px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            button {
+                padding: 10px;
+            }
+            th, td {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Nash SimiSimi API Key</h1>
+    <button id="generate-key-btn">Generate New API Key</button>
+    <div id="api-key-display"></div>
+    
+    <h2>Active API Keys</h2>
+    <table id="api-keys-table">
+        <thead>
+            <tr>
+                <th>API Key</th>
+                <th>Expiration Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="api-keys-body">
+        </tbody>
+    </table>
+
+    <h2>Example Code to Use API Key</h2>
+    <pre id="adik" style="white-space: pre-wrap; word-wrap: break-word; width: 100%;">
+const apiKey = 'YOUR_GENERATED_API_KEY';
+
+fetch('https://example.com/nash?prompt=&apiKey=', {
+    method: 'GET',
+    headers: {
+        'Authorization': \`Bearer \${apiKey}\`
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+    </pre>
+
+    <script>
+        document.getElementById('generate-key-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/apikey');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                document.getElementById('api-key-display').textContent = `Generated API Key: ${data.apiKey}`;
+                loadApiKeys();
+            } catch (err) {
+                console.error('Error generating API key:', err);
+                alert('Failed to generate API Key. Please try again later.');
+            }
+        });
+
+        const loadApiKeys = async () => {
+            try {
+                const response = await fetch('/api/keys');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const keys = await response.json();
+                const tbody = document.getElementById('api-keys-body');
+                tbody.innerHTML = '';
+
+                keys.forEach(key => {
+                    const expirationDate = new Date(key.expiration);
+                    const now = new Date();
+                    const isExpired = expirationDate < now;
+
+                    const formatter = new Intl.DateTimeFormat('en-PH', {
+                        timeZone: 'Asia/Manila',
+                        dateStyle: 'medium',
+                        timeStyle: 'medium'
+                    });
+                    const formattedExpirationDate = formatter.format(expirationDate);
+
+                    const row = document.createElement('tr');
+                    const statusClass = isExpired ? 'expired' : 'active';
+                    row.innerHTML = `
+                        <td>${key.api_key}</td>
+                        <td>${formattedExpirationDate}</td>
+                        <td class="${statusClass}">
+                            <div class="${statusClass}">${isExpired ? 'Expired' : 'Active'}</div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error('Error loading API keys:', err);
+            }
+        };
+
+        loadApiKeys();
+    </script>
+</body>
+</html>

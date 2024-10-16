@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nash</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f7fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    textarea {
+      height: 100px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-size: 14px;
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Nash Sim Teach</h1>
+  <p>Teach Nash new questions and answers</p>
+  
+  <input type="text" id="question" placeholder="Enter question" required>
+  <textarea id="answer" placeholder="Enter answer"></textarea>
+  <button id="teachBtn">Teach</button>
+  
+  <div id="response" class="message"></div>
+</div>
+
+<script>
+  document.getElementById('teachBtn').addEventListener('click', async function() {
+    const question = document.getElementById('question').value.trim();
+    const answer = document.getElementById('answer').value.trim();
+    
+    if (!question || !answer) {
+      document.getElementById('response').textContent = 'Please fill in both fields.';
+      document.getElementById('response').classList.add('error');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/teach?question=${encodeURIComponent(question)}&answer=${encodeURIComponent(answer)}`, {
+        method: 'GET',
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        document.getElementById('response').textContent = result.message;
+        document.getElementById('response').classList.remove('error');
+      } else {
+        document.getElementById('response').textContent = result.message || 'Something went wrong.';
+        document.getElementById('response').classList.add('error');
+      }
+    } catch (error) {
+      document.getElementById('response').textContent = 'Error communicating with the server.';
+      document.getElementById('response').classList.add('error');
+    }
+  });
+</script>
+
+</body>
+</html>
