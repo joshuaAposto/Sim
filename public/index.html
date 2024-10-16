@@ -1,206 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimiSimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Dashboard</title>
+    <meta name="description" content="API Dashboard for Nash functionalities.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #f0f2f5, #e6e9ff);
-            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #007bff;
+        }
+
+        .navbar-brand {
+            color: #fff;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+        .footer {
+            text-align: center;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        h1 {
-            color: #007bff;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            text-align: center;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin: 10px 0;
-            font-size: 1em;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            table-layout: fixed;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            font-size: 0.9em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        th {
-            background-color: #007bff;
+            background-color: #343a40;
             color: white;
-            position: sticky;
-            top: 0;
         }
 
-        #api-key-display {
+        .api-button {
             margin: 20px 0;
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1em;
-            word-wrap: break-word;
-            border: 1px solid #28a745;
+        }
+
+        .code-sample {
+            background-color: #e9ecef;
             padding: 10px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .expired {
-            background-color: #f8d7da;
-            color: #721c24;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 4px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .active {
-            background-color: #d4edda;
-            color: #155724;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 4px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            button {
-                padding: 10px;
-            }
-            th, td {
-                font-size: 0.8em;
-            }
+            border-radius: 5px;
+            font-family: monospace;
         }
     </style>
 </head>
+
 <body>
-    <h1>Nash SimiSimi API Key</h1>
-    <button id="generate-key-btn">Generate New API Key</button>
-    <div id="api-key-display"></div>
-    
-    <h2>Active API Keys</h2>
-    <table id="api-keys-table">
-        <thead>
-            <tr>
-                <th>API Key</th>
-                <th>Expiration Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="api-keys-body">
-        </tbody>
-    </table>
 
-    <h2>Example Code to Use API Key</h2>
-    <pre id="adik" style="white-space: pre-wrap; word-wrap: break-word; width: 100%;">
-const apiKey = 'YOUR_GENERATED_API_KEY';
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Nash SimiSimi</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="apikey.html">ApiKey</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-fetch('https://example.com/nash?prompt=&apiKey=', {
-    method: 'GET',
-    headers: {
-        'Authorization': \`Bearer \${apiKey}\`
-    }
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
-    </pre>
+    <div class="container">
+        <div id="home" class="section text-center">
+            <h2>Welcome to the Nash Dashboard</h2>
+            <p>A simple way to get a Nash SimiSimi Fun Server</p>
+        </div>
+
+        <div id="talk-usage" class="section">
+            <h3 class="text-center">Talk API Usage</h3>
+            <p>API Usage:</p>
+            <button class="btn btn-outline-primary api-button" onclick="copyToClipboard('https://example.com/nash?prompt=&apiKey=')">
+                EXAMPLE.COM/<b style="color: gold;">NASH</b>?PROMPT=<i><b style="color: gold;">[PROMPT]</b></i>&APIKEY=<i><b style="color: gold;">[API_KEY]</b></i>
+            </button>
+            <div class="code-sample text-center">
+                Example Request:<br>
+                <code>GET https://example.com/nash?prompt=hello&apiKey=YOUR_API_KEY</code>
+            </div>
+        </div>
+
+        <div id="teach-usage" class="section">
+            <h3 class="text-center">Teach API Usage</h3>
+            <p>API Usage:</p>
+            <button class="btn btn-outline-primary api-button" onclick="copyToClipboard('https://example.com/teach?question=&answer=')">
+                EXAMPLE.COM/<b style="color: gold;">TEACH</b>?QUESTION=<i><b style="color: gold;">[QUESTION]</b></i>&ANSWER=<i><b style="color: gold;">[ANSWER]</b></i>
+            </button>
+            <div class="code-sample text-center">
+                Example Request:<br>
+                <code>GET https://example.com/teach?question=hi&answer=hello</code>
+            </div>
+        </div>
+
+        <div id="contact" class="section text-center">
+            <h3>Contact Us</h3>
+            <p>Email: <a href="mailto:joshuaapostol909@gmail.com">joshuaapostol909@gmail.com</a></p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Nash API. All Rights Reserved.</p>
+    </footer>
 
     <script>
-        document.getElementById('generate-key-btn').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/apikey');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                document.getElementById('api-key-display').textContent = `Generated API Key: ${data.apiKey}`;
-                loadApiKeys();
-            } catch (err) {
-                console.error('Error generating API key:', err);
-                alert('Failed to generate API Key. Please try again later.');
-            }
-        });
-
-        const loadApiKeys = async () => {
-            try {
-                const response = await fetch('/api/keys');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const keys = await response.json();
-                const tbody = document.getElementById('api-keys-body');
-                tbody.innerHTML = '';
-
-                keys.forEach(key => {
-                    const expirationDate = new Date(key.expiration);
-                    const now = new Date();
-                    const isExpired = expirationDate < now;
-
-                    const formatter = new Intl.DateTimeFormat('en-PH', {
-                        timeZone: 'Asia/Manila',
-                        dateStyle: 'medium',
-                        timeStyle: 'medium'
-                    });
-                    const formattedExpirationDate = formatter.format(expirationDate);
-
-                    const row = document.createElement('tr');
-                    const statusClass = isExpired ? 'expired' : 'active';
-                    row.innerHTML = `
-                        <td>${key.api_key}</td>
-                        <td>${formattedExpirationDate}</td>
-                        <td class="${statusClass}">
-                            <div class="${statusClass}">${isExpired ? 'Expired' : 'Active'}</div>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (err) {
-                console.error('Error loading API keys:', err);
-            }
-        };
-
-        loadApiKeys();
+        function copyToClipboard(text) {
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("Copied to clipboard: " + text);
+        }
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
